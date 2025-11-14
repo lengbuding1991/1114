@@ -557,6 +557,13 @@ export default {
         current.messages = []
       }
       
+      // 如果是新对话且还没有消息，将第一条消息内容设置为对话标题
+      if (current.title === '新对话' && current.messages.length === 0) {
+        // 截取消息内容作为标题（最多20个字符）
+        const title = messageInput.value.trim().substring(0, 20)
+        current.title = title.length < messageInput.value.trim().length ? title + '...' : title
+      }
+      
       // 添加用户消息
       current.messages.push({
         id: Date.now(),
