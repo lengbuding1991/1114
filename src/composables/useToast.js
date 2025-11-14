@@ -1,9 +1,9 @@
 import { ref } from 'vue'
 
-// 全局提示管理器
-const toastRef = ref(null)
-
+// 创建全局提示管理器
 export function useToast() {
+  const toastRef = ref(null)
+
   const showToast = (options) => {
     if (toastRef.value) {
       toastRef.value.show(options)
@@ -33,6 +33,10 @@ export function useToast() {
     showToast({ title, message, type: 'info' })
   }
 
+  const setRef = (ref) => {
+    toastRef.value = ref
+  }
+
   return {
     show: showToast,
     hide: hideToast,
@@ -40,8 +44,6 @@ export function useToast() {
     error,
     warning,
     info,
-    setRef: (ref) => {
-      toastRef.value = ref
-    }
+    setRef
   }
 }

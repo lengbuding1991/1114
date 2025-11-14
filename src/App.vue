@@ -86,9 +86,17 @@ export default {
     const toastRef = ref(null)
     const toast = useToast()
     
+    // 立即设置Toast引用
+    const setToastRef = () => {
+      if (toastRef.value) {
+        toast.setRef(toastRef.value)
+      }
+    }
+    
     return {
       toastRef,
-      toast
+      toast,
+      setToastRef
     }
   },
   data() {
@@ -126,15 +134,14 @@ export default {
       inputMessage: '',
       
       // 其他状态
-      isFavorite: false,
-      hasNotifications: false
     }
   },
   mounted() {
     // 设置提示组件引用
-    if (this.toastRef) {
-      this.toast.setRef(this.toastRef.value)
-    }
+    this.setToastRef()
+    this.$nextTick(() => {
+      this.setToastRef()
+    })
     
     // 检查本地存储的主题设置
     const savedTheme = localStorage.getItem('theme')
@@ -359,21 +366,6 @@ export default {
 </script>
 
 <style scoped>
-/* 自定义滚动条样式 */
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-
-/* 过渡动画 */
-.transition-bg {
-  transition: background-color 0.2s ease;
-}
-
 /* 响应式设计 */
 @media (max-width: 768px) {
   .sidebar-collapsed {
