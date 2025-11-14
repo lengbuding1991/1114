@@ -3,8 +3,11 @@
     class="font-inter bg-light dark:bg-dark-bg text-dark dark:text-light h-screen flex flex-col overflow-hidden"
     :class="{ 'dark': isDarkMode }"
   >
-    <!-- 主内容区域 -->
-    <div class="flex h-full overflow-hidden">
+    <!-- 提示组件 -->
+  <Toast ref="toastRef" />
+  
+  <!-- 主内容区域 -->
+  <div class="flex h-full overflow-hidden">
       <!-- 侧边栏 -->
       <aside
         :class="[
@@ -81,50 +84,72 @@
         <!-- 侧边栏底部用户信息 -->
         <div class="p-3 border-t border-gray-200 dark:border-gray-700">
           <div class="relative">
-            <!-- 用户信息区域 -->
-            <div 
-              @click="toggleUserDropdown"
-              class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-hover transition-bg cursor-pointer"
-            >
-              <img
-                src="https://design.gemcoder.com/staticResource/echoAiSystemImages/3af53b10252ba2331a996da3c32fd378.png"
-                alt="用户头像"
-                class="w-8 h-8 rounded-full object-cover"
-              />
-              <div class="flex-1 min-w-0" v-if="!isSidebarCollapsed">
-                <p class="text-sm font-medium truncate">张小明</p>
-                <p class="text-xs text-gray-500 dark:text-gray-400 truncate">个人版</p>
-              </div>
-              <i class="fas fa-chevron-down text-xs text-gray-500 dark:text-gray-400"></i>
+            <!-- 未登录状态：显示登录按钮 -->
+            <div v-if="!isLoggedIn" class="flex items-center justify-center">
+              <button
+                @click="showLoginModal = true"
+                class="w-full flex items-center justify-center space-x-2 bg-primary hover:bg-primary/90 text-white py-2.5 px-4 rounded-lg transition-bg font-medium"
+              >
+                <i class="fas fa-sign-in-alt"></i>
+                <span v-if="!isSidebarCollapsed">登录</span>
+              </button>
             </div>
             
-            <!-- 用户下拉菜单 -->
-            <div 
-              v-if="showUserDropdown"
-              class="absolute bottom-full left-0 right-0 mb-2 bg-white dark:bg-dark-card rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-10"
-            >
-              <button
-                @click="showSettings"
-                class="w-full flex items-center space-x-3 p-2 hover:bg-gray-100 dark:hover:bg-dark-hover transition-bg text-left"
+            <!-- 已登录状态：显示用户信息 -->
+            <div v-else>
+              <!-- 用户信息区域 -->
+              <div 
+                @click="toggleUserDropdown"
+                class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-hover transition-bg cursor-pointer"
               >
-                <i class="fas fa-cog text-gray-500 dark:text-gray-400 w-5 text-center"></i>
-                <span class="text-sm">设置</span>
-              </button>
-              <button
-                @click="showHelp"
-                class="w-full flex items-center space-x-3 p-2 hover:bg-gray-100 dark:hover:bg-dark-hover transition-bg text-left"
+                <img
+                  :src="userInfo?.avatar || 'https://design.gemcoder.com/staticResource/echoAiSystemImages/3af53b10252ba2331a996da3c32fd378.png'"
+                  alt="用户头像"
+                  class="w-8 h-8 rounded-full object-cover"
+                />
+                <div class="flex-1 min-w-0" v-if="!isSidebarCollapsed">
+                  <p class="text-sm font-medium truncate">{{ userInfo?.username || '用户' }}</p>
+                  <p class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ userInfo?.plan || '个人版' }}</p>
+                </div>
+                <i class="fas fa-chevron-down text-xs text-gray-500 dark:text-gray-400"></i>
+              </div>
+              
+              <!-- 用户下拉菜单 -->
+              <div 
+                v-if="showUserDropdown"
+                class="absolute bottom-full left-0 right-0 mb-2 bg-white dark:bg-dark-card rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-10"
               >
-                <i class="fas fa-question-circle text-gray-500 dark:text-gray-400 w-5 text-center"></i>
-                <span class="text-sm">帮助与反馈</span>
-              </button>
-              <div class="border-t border-gray-200 dark:border-gray-700 my-1"></div>
-              <button
-                @click="toggleTheme"
-                class="w-full flex items-center space-x-3 p-2 hover:bg-gray-100 dark:hover:bg-dark-hover transition-bg text-left"
-              >
-                <i :class="isDarkMode ? 'fas fa-sun' : 'fas fa-moon'" class="text-gray-500 dark:text-gray-400 w-5 text-center"></i>
-                <span class="text-sm">{{ isDarkMode ? '浅色模式' : '深色模式' }}</span>
-              </button>
+                <button
+                  @click="showSettings"
+                  class="w-full flex items-center space-x-3 p-2 hover:bg-gray-100 dark:hover:bg-dark-hover transition-bg text-left"
+                >
+                  <i class="fas fa-cog text-gray-500 dark:text-gray-400 w-5 text-center"></i>
+                  <span class="text-sm">设置</span>
+                </button>
+                <button
+                  @click="showHelp"
+                  class="w-full flex items-center space-x-3 p-2 hover:bg-gray-100 dark:hover:bg-dark-hover transition-bg text-left"
+                >
+                  <i class="fas fa-question-circle text-gray-500 dark:text-gray-400 w-5 text-center"></i>
+                  <span class="text-sm">帮助与反馈</span>
+                </button>
+                <div class="border-t border-gray-200 dark:border-gray-700 my-1"></div>
+                <button
+                  @click="toggleTheme"
+                  class="w-full flex items-center space-x-3 p-2 hover:bg-gray-100 dark:hover:bg-dark-hover transition-bg text-left"
+                >
+                  <i :class="isDarkMode ? 'fas fa-sun' : 'fas fa-moon'" class="text-gray-500 dark:text-gray-400 w-5 text-center"></i>
+                  <span class="text-sm">{{ isDarkMode ? '浅色模式' : '深色模式' }}</span>
+                </button>
+                <div class="border-t border-gray-200 dark:border-gray-700 my-1"></div>
+                <button
+                  @click="handleLogout"
+                  class="w-full flex items-center space-x-3 p-2 hover:bg-gray-100 dark:hover:bg-dark-hover transition-bg text-left"
+                >
+                  <i class="fas fa-sign-out-alt text-gray-500 dark:text-gray-400 w-5 text-center"></i>
+                  <span class="text-sm">退出登录</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -335,15 +360,149 @@
         </div>
       </div>
     </div>
+    
+    <!-- 登录弹窗 -->
+    <div v-if="showLoginModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div class="bg-white dark:bg-dark-card rounded-xl shadow-lg w-full max-w-md">
+        <!-- 弹窗头部 -->
+        <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+          <h3 class="text-lg font-semibold">{{ loginForm.isRegister ? '注册账号' : '登录账号' }}</h3>
+          <button
+            @click="closeLoginModal"
+            class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-dark-hover"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <!-- 弹窗内容 -->
+        <div class="p-6">
+          <!-- 登录/注册切换 -->
+          <div class="flex mb-6 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+            <button
+              @click="loginForm.isRegister = false"
+              :class="[
+                'flex-1 py-2 px-4 rounded-md text-sm font-medium transition-bg',
+                !loginForm.isRegister 
+                  ? 'bg-white dark:bg-dark-card shadow-sm text-primary' 
+                  : 'text-gray-600 dark:text-gray-400'
+              ]"
+            >
+              登录
+            </button>
+            <button
+              @click="loginForm.isRegister = true"
+              :class="[
+                'flex-1 py-2 px-4 rounded-md text-sm font-medium transition-bg',
+                loginForm.isRegister 
+                  ? 'bg-white dark:bg-dark-card shadow-sm text-primary' 
+                  : 'text-gray-600 dark:text-gray-400'
+              ]"
+            >
+              注册
+            </button>
+          </div>
+          
+          <!-- 登录表单 -->
+          <form @submit.prevent="handleLogin" class="space-y-4">
+            <!-- 注册时的用户名字段 -->
+            <div v-if="loginForm.isRegister" class="space-y-2">
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">用户名</label>
+              <input
+                v-model="loginForm.username"
+                type="text"
+                placeholder="请输入用户名"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary bg-white dark:bg-dark-card"
+                required
+              />
+            </div>
+            
+            <!-- 注册时的邮箱字段 -->
+            <div v-if="loginForm.isRegister" class="space-y-2">
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">邮箱</label>
+              <input
+                v-model="loginForm.email"
+                type="email"
+                placeholder="请输入邮箱"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary bg-white dark:bg-dark-card"
+                required
+              />
+            </div>
+            
+            <!-- 登录时的邮箱/用户名字段 -->
+            <div v-if="!loginForm.isRegister" class="space-y-2">
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">邮箱或用户名</label>
+              <input
+                v-model="loginForm.identifier"
+                type="text"
+                placeholder="请输入邮箱或用户名"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary bg-white dark:bg-dark-card"
+                required
+              />
+            </div>
+            
+            <!-- 密码字段 -->
+            <div class="space-y-2">
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">密码</label>
+              <input
+                v-model="loginForm.password"
+                type="password"
+                :placeholder="loginForm.isRegister ? '请输入密码' : '请输入密码'"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary bg-white dark:bg-dark-card"
+                required
+              />
+            </div>
+            
+            <!-- 注册时的确认密码字段 -->
+            <div v-if="loginForm.isRegister" class="space-y-2">
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">确认密码</label>
+              <input
+                v-model="loginForm.confirmPassword"
+                type="password"
+                placeholder="请再次输入密码"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary bg-white dark:bg-dark-card"
+                required
+              />
+            </div>
+            
+            <!-- 提交按钮 -->
+            <button
+              type="submit"
+              class="w-full bg-primary hover:bg-primary/90 text-white py-3 px-4 rounded-lg font-medium transition-bg"
+            >
+              {{ loginForm.isRegister ? '注册' : '登录' }}
+            </button>
+          </form>
+          
+          <!-- 测试账号提示 -->
+          <div v-if="!loginForm.isRegister" class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+            <p class="text-sm text-blue-700 dark:text-blue-300">
+              <strong>测试账号：</strong><br>
+              邮箱/用户名：498128186@qq.com 或 冷丶布丁<br>
+              密码：shuishui
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
+import Toast from './components/Toast.vue'
+import { useToast } from './composables/useToast'
 
 export default {
   name: 'App',
+  components: {
+    Toast
+  },
   setup() {
+    // 提示功能
+    const toastRef = ref(null)
+    const toast = useToast()
+    
     // 响应式状态
     const isDarkMode = ref(false)
     const isSidebarCollapsed = ref(false)
@@ -353,6 +512,103 @@ export default {
     const isFavorite = ref(false)
     const messageInput = ref('')
     const selectedChatId = ref(1)
+    
+    // 用户认证相关状态
+    const isLoggedIn = ref(false);
+    const userInfo = ref({
+      username: '',
+      email: '',
+      avatar: ''
+    });
+    const showLoginModal = ref(false);
+    const loginForm = ref({
+      isRegister: false,
+      identifier: '',
+      username: '',
+      email: '',
+      password: '',
+      confirmPassword: ''
+    });
+    
+    // 打开登录弹窗
+    const openLoginModal = () => {
+      showLoginModal.value = true;
+    };
+    
+    // 关闭登录弹窗
+    const closeLoginModal = () => {
+      showLoginModal.value = false;
+      // 重置表单
+      loginForm.value = {
+        isRegister: false,
+        identifier: '',
+        username: '',
+        email: '',
+        password: '',
+        confirmPassword: ''
+      };
+    };
+    
+    // 处理登录/注册
+    const handleLogin = async () => {
+      try {
+        if (loginForm.value.isRegister) {
+          // 注册逻辑（暂不实现）
+          toast.warning('注册功能暂未实现，请使用登录功能');
+          return;
+        }
+        
+        // 测试用户数据
+        const testUsers = [
+          {
+            email: '498128186@qq.com',
+            username: '冷丶布丁',
+            password: 'shuishui',
+            avatar: 'https://design.gemcoder.com/staticResource/echoAiSystemImages/3af53b10252ba2331a996da3c32fd378.png'
+          }
+        ];
+        
+        // 登录验证
+        const identifier = loginForm.value.identifier.trim();
+        const password = loginForm.value.password;
+        
+        // 查找匹配的用户
+        const user = testUsers.find(u => 
+          (u.email === identifier || u.username === identifier) && u.password === password
+        );
+        
+        if (user) {
+          // 登录成功
+          isLoggedIn.value = true;
+          userInfo.value = {
+            username: user.username,
+            email: user.email,
+            avatar: user.avatar || ''
+          };
+          closeLoginModal();
+          
+          // 显示登录成功提示
+          toast.success(`登录成功！欢迎 ${user.username}`);
+        } else {
+          // 登录失败
+          toast.error('登录失败，请检查账号和密码');
+        }
+      } catch (error) {
+        console.error('登录错误:', error);
+        toast.error('登录过程中发生错误，请重试');
+      }
+    };
+    
+    // 退出登录
+    const handleLogout = () => {
+      isLoggedIn.value = false;
+      userInfo.value = {
+        username: '',
+        email: '',
+        avatar: ''
+      };
+      toast.info('已退出登录');
+    };
     
     const currentModel = ref('DeepSeek-7B')
     const availableModels = ['DeepSeek-7B', 'DeepSeek-13B', 'DeepSeek-Coder']
@@ -600,6 +856,11 @@ export default {
         isDarkMode.value = true
         document.documentElement.classList.add('dark')
       }
+      
+      // 设置提示组件引用
+      if (toastRef.value) {
+        toast.setRef(toastRef.value)
+      }
     })
 
     onUnmounted(() => {
@@ -620,6 +881,12 @@ export default {
       availableModels,
       recentChats,
       quickSuggestions,
+      
+      // 用户认证状态
+      isLoggedIn,
+      userInfo,
+      showLoginModal,
+      loginForm,
       
       // 计算属性
       currentChat,
@@ -644,7 +911,16 @@ export default {
       likeMessage,
       dislikeMessage,
       copyMessage,
-      sendMessage
+      sendMessage,
+      
+      // 用户认证方法
+      openLoginModal,
+      closeLoginModal,
+      handleLogin,
+      handleLogout,
+      
+      // 提示组件引用
+      toastRef
     }
   }
 }
