@@ -491,20 +491,25 @@ export default {
       const chatIndex = recentChats.findIndex(chat => chat.id === chatId)
       if (chatIndex === -1) return
       
+      // 检查是否是最后一个对话
+      const isLastChat = recentChats.length === 1
+      
       // 如果要删除的是当前选中的对话，切换到其他对话
       if (selectedChatId.value === chatId) {
         // 如果有其他对话，切换到第一个
         if (recentChats.length > 1) {
           const newIndex = chatIndex === 0 ? 1 : 0
           selectedChatId.value = recentChats[newIndex].id
-        } else {
-          // 如果没有其他对话，创建一个新对话
-          newChat()
         }
       }
       
       // 从数组中删除对话
       recentChats.splice(chatIndex, 1)
+      
+      // 如果是最后一个对话被删除，创建一个新对话
+      if (isLastChat) {
+        newChat()
+      }
       
       console.log('删除对话:', chatId)
     }
