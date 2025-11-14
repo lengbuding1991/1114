@@ -155,7 +155,7 @@
                 <i :class="isFavorite ? 'fas fa-star text-yellow-500' : 'fas fa-star text-gray-500 dark:text-gray-400'"></i>
               </button>
               <button
-                @click="deleteChat"
+                @click="deleteChat(selectedChatId)"
                 class="p-2 rounded hover:bg-gray-100 dark:hover:bg-dark-hover transition-bg"
               >
                 <i class="fas fa-trash-alt text-gray-500 dark:text-gray-400"></i>
