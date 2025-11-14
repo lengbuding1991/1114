@@ -77,24 +77,14 @@
           </div>
         </div>
 
-        <!-- 侧边栏底部设置 -->
+        <!-- 侧边栏底部用户信息 -->
         <div class="p-3 border-t border-gray-200 dark:border-gray-700">
-          <div class="space-y-1">
-            <button
-              @click="showSettings"
-              class="w-full flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-hover transition-bg"
+          <div class="relative">
+            <!-- 用户信息区域 -->
+            <div 
+              @click="toggleUserDropdown"
+              class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-hover transition-bg cursor-pointer"
             >
-              <i class="fas fa-cog text-gray-500 dark:text-gray-400 w-5 text-center"></i>
-              <span v-if="!isSidebarCollapsed" class="text-sm">设置</span>
-            </button>
-            <button
-              @click="showHelp"
-              class="w-full flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-hover transition-bg"
-            >
-              <i class="fas fa-question-circle text-gray-500 dark:text-gray-400 w-5 text-center"></i>
-              <span v-if="!isSidebarCollapsed" class="text-sm">帮助与反馈</span>
-            </button>
-            <div class="pt-2 mt-2 border-t border-gray-200 dark:border-gray-700 flex items-center space-x-3 p-2 rounded-lg">
               <img
                 src="https://design.gemcoder.com/staticResource/echoAiSystemImages/3af53b10252ba2331a996da3c32fd378.png"
                 alt="用户头像"
@@ -104,11 +94,35 @@
                 <p class="text-sm font-medium truncate">张小明</p>
                 <p class="text-xs text-gray-500 dark:text-gray-400 truncate">个人版</p>
               </div>
+              <i class="fas fa-chevron-down text-xs text-gray-500 dark:text-gray-400"></i>
+            </div>
+            
+            <!-- 用户下拉菜单 -->
+            <div 
+              v-if="showUserDropdown"
+              class="absolute bottom-full left-0 right-0 mb-2 bg-white dark:bg-dark-card rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-10"
+            >
+              <button
+                @click="showSettings"
+                class="w-full flex items-center space-x-3 p-2 hover:bg-gray-100 dark:hover:bg-dark-hover transition-bg text-left"
+              >
+                <i class="fas fa-cog text-gray-500 dark:text-gray-400 w-5 text-center"></i>
+                <span class="text-sm">设置</span>
+              </button>
+              <button
+                @click="showHelp"
+                class="w-full flex items-center space-x-3 p-2 hover:bg-gray-100 dark:hover:bg-dark-hover transition-bg text-left"
+              >
+                <i class="fas fa-question-circle text-gray-500 dark:text-gray-400 w-5 text-center"></i>
+                <span class="text-sm">帮助与反馈</span>
+              </button>
+              <div class="border-t border-gray-200 dark:border-gray-700 my-1"></div>
               <button
                 @click="toggleTheme"
-                class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-dark-hover transition-bg"
+                class="w-full flex items-center space-x-3 p-2 hover:bg-gray-100 dark:hover:bg-dark-hover transition-bg text-left"
               >
-                <i :class="isDarkMode ? 'fas fa-sun' : 'fas fa-moon'" class="text-gray-500 dark:text-gray-400"></i>
+                <i :class="isDarkMode ? 'fas fa-sun' : 'fas fa-moon'" class="text-gray-500 dark:text-gray-400 w-5 text-center"></i>
+                <span class="text-sm">{{ isDarkMode ? '浅色模式' : '深色模式' }}</span>
               </button>
             </div>
           </div>
@@ -333,6 +347,7 @@ export default {
     const isDarkMode = ref(false)
     const isSidebarCollapsed = ref(false)
     const showModelDropdown = ref(false)
+    const showUserDropdown = ref(false)
     const hasNotifications = ref(true)
     const isFavorite = ref(false)
     const messageInput = ref('')
@@ -422,6 +437,10 @@ export default {
       showModelDropdown.value = !showModelDropdown.value
     }
 
+    const toggleUserDropdown = () => {
+      showUserDropdown.value = !showUserDropdown.value
+    }
+
     const selectModel = (model) => {
       currentModel.value = model
       showModelDropdown.value = false
@@ -450,10 +469,12 @@ export default {
 
     const showSettings = () => {
       console.log('显示设置')
+      showUserDropdown.value = false
     }
 
     const showHelp = () => {
       console.log('显示帮助')
+      showUserDropdown.value = false
     }
 
     const showHistory = () => {
@@ -520,6 +541,9 @@ export default {
       if (showModelDropdown.value && !event.target.closest('.group')) {
         showModelDropdown.value = false
       }
+      if (showUserDropdown.value && !event.target.closest('.relative')) {
+        showUserDropdown.value = false
+      }
     }
 
     onMounted(() => {
@@ -540,6 +564,7 @@ export default {
       isDarkMode,
       isSidebarCollapsed,
       showModelDropdown,
+      showUserDropdown,
       hasNotifications,
       isFavorite,
       messageInput,
@@ -557,6 +582,7 @@ export default {
       toggleSidebar,
       expandSidebar,
       toggleModelDropdown,
+      toggleUserDropdown,
       selectModel,
       newChat,
       selectChat,
