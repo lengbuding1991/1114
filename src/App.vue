@@ -314,7 +314,7 @@
                   v-model="messageInput"
                   @keydown.enter.exact.prevent="sendMessage"
                   placeholder="输入您的问题..."
-                  class="w-full bg-transparent border-0 focus:ring-0 resize-none p-3 min-h-[60px] max-h-32"
+                  class="w-full bg-transparent border-0 focus:ring-0 focus:outline-none focus:border-primary/50 resize-none p-3 min-h-[60px] max-h-32 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent scrollbar-thumb-rounded-full"
                   rows="2"
                 ></textarea>
               </div>
