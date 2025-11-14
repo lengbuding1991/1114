@@ -448,12 +448,27 @@ export default {
     }
 
     const newChat = () => {
+      // 定义可用的颜色选项
+      const colorOptions = [
+        { color: 'bg-blue-100 dark:bg-blue-900/30', iconColor: 'text-blue-500 dark:text-blue-400' },
+        { color: 'bg-green-100 dark:bg-green-900/30', iconColor: 'text-green-500 dark:text-green-400' },
+        { color: 'bg-purple-100 dark:bg-purple-900/30', iconColor: 'text-purple-500 dark:text-purple-400' },
+        { color: 'bg-yellow-100 dark:bg-yellow-900/30', iconColor: 'text-yellow-500 dark:text-yellow-400' },
+        { color: 'bg-red-100 dark:bg-red-900/30', iconColor: 'text-red-500 dark:text-red-400' },
+        { color: 'bg-indigo-100 dark:bg-indigo-900/30', iconColor: 'text-indigo-500 dark:text-indigo-400' },
+        { color: 'bg-pink-100 dark:bg-pink-900/30', iconColor: 'text-pink-500 dark:text-pink-400' },
+        { color: 'bg-teal-100 dark:bg-teal-900/30', iconColor: 'text-teal-500 dark:text-teal-400' }
+      ]
+      
+      // 随机选择一个颜色
+      const randomColor = colorOptions[Math.floor(Math.random() * colorOptions.length)]
+      
       const newChat = {
         id: Date.now(),
         title: '新对话',
         time: '刚刚',
-        color: 'bg-gray-100 dark:bg-gray-900/30',
-        iconColor: 'text-gray-500 dark:text-gray-400',
+        color: randomColor.color,
+        iconColor: randomColor.iconColor,
         messages: []
       }
       recentChats.unshift(newChat)
