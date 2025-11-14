@@ -68,10 +68,11 @@
                 <p class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ chat.time }}</p>
               </div>
               <button
-                @click.stop="showChatOptions(chat.id)"
-                class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1 opacity-0 hover:opacity-100 transition-opacity"
+                @click.stop="deleteChat(chat.id)"
+                class="text-gray-400 hover:text-red-500 dark:hover:text-red-400 p-1 opacity-0 hover:opacity-100 transition-opacity"
+                title="删除对话"
               >
-                <i class="fas fa-ellipsis-h"></i>
+                <i class="fas fa-trash-alt"></i>
               </button>
             </div>
           </div>
@@ -485,8 +486,27 @@ export default {
       isFavorite.value = !isFavorite.value
     }
 
-    const deleteChat = () => {
-      console.log('删除对话')
+    const deleteChat = (chatId) => {
+      // 找到要删除的对话索引
+      const chatIndex = recentChats.findIndex(chat => chat.id === chatId)
+      if (chatIndex === -1) return
+      
+      // 如果要删除的是当前选中的对话，切换到其他对话
+      if (selectedChatId.value === chatId) {
+        // 如果有其他对话，切换到第一个
+        if (recentChats.length > 1) {
+          const newIndex = chatIndex === 0 ? 1 : 0
+          selectedChatId.value = recentChats[newIndex].id
+        } else {
+          // 如果没有其他对话，创建一个新对话
+          newChat()
+        }
+      }
+      
+      // 从数组中删除对话
+      recentChats.splice(chatIndex, 1)
+      
+      console.log('删除对话:', chatId)
     }
 
     const toggleNotifications = () => {
