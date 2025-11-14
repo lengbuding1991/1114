@@ -189,8 +189,8 @@
 
         <!-- 聊天区域对话内容 -->
         <main class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 bg-gray-50 dark:bg-dark-bg">
-          <!-- 欢迎消息 -->
-          <div class="max-w-3xl mx-auto">
+          <!-- 新对话时的欢迎消息 -->
+          <div v-if="currentChat().messages.length === 0" class="max-w-3xl mx-auto">
             <div class="bg-white dark:bg-dark-card rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700">
               <div class="flex items-start space-x-4">
                 <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
@@ -220,103 +220,71 @@
             </div>
           </div>
 
-          <!-- 用户消息 -->
-          <div class="max-w-3xl mx-auto flex items-start space-x-4">
-            <img
-              src="https://design.gemcoder.com/staticResource/echoAiSystemImages/3af53b10252ba2331a996da3c32fd378.png"
-              alt="用户头像"
-              class="w-10 h-10 rounded-full object-cover flex-shrink-0"
-            />
-            <div class="flex-1">
-              <div class="bg-white dark:bg-dark-card rounded-xl shadow-sm p-4 border border-gray-200 dark:border-gray-700">
-                <p>你好，我想了解一下如何使用Tailwind CSS构建响应式界面</p>
-              </div>
-              <div class="flex items-center space-x-2 mt-1 ml-2">
-                <button
-                  @click="likeMessage"
-                  class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-xs p-1"
-                >
-                  <i class="fas fa-thumbs-up"></i>
-                </button>
-                <button
-                  @click="dislikeMessage"
-                  class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-xs p-1"
-                >
-                  <i class="fas fa-thumbs-down"></i>
-                </button>
-                <button
-                  @click="copyMessage"
-                  class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-xs p-1"
-                >
-                  <i class="fas fa-copy"></i>
-                </button>
+          <!-- 显示当前对话的消息 -->
+          <div v-for="message in currentChat().messages" :key="message.id" class="max-w-3xl mx-auto">
+            <!-- 用户消息 -->
+            <div v-if="message.type === 'user'" class="flex items-start space-x-4">
+              <img
+                src="https://design.gemcoder.com/staticResource/echoAiSystemImages/3af53b10252ba2331a996da3c32fd378.png"
+                alt="用户头像"
+                class="w-10 h-10 rounded-full object-cover flex-shrink-0"
+              />
+              <div class="flex-1">
+                <div class="bg-white dark:bg-dark-card rounded-xl shadow-sm p-4 border border-gray-200 dark:border-gray-700">
+                  <p>{{ message.content }}</p>
+                </div>
+                <div class="flex items-center space-x-2 mt-1 ml-2">
+                  <button
+                    @click="likeMessage"
+                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-xs p-1"
+                  >
+                    <i class="fas fa-thumbs-up"></i>
+                  </button>
+                  <button
+                    @click="dislikeMessage"
+                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-xs p-1"
+                  >
+                    <i class="fas fa-thumbs-down"></i>
+                  </button>
+                  <button
+                    @click="copyMessage"
+                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-xs p-1"
+                  >
+                    <i class="fas fa-copy"></i>
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
 
-          <!-- AI回复 -->
-          <div class="max-w-3xl mx-auto flex items-start space-x-4">
-            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-              <i class="fas fa-robot text-primary"></i>
-            </div>
-            <div class="flex-1">
-              <div class="bg-white dark:bg-dark-card rounded-xl shadow-sm p-4 border border-gray-200 dark:border-gray-700">
-                <h3 class="text-lg font-semibold mb-2">使用Tailwind CSS构建响应式界面的基本步骤</h3>
-                <p class="mb-3">
-                  Tailwind CSS是一个实用优先的CSS框架，它提供了大量的预定义类，可以帮助你快速构建响应式界面。以下是使用Tailwind CSS构建响应式界面的基本步骤：
-                </p>
-                <h4 class="font-medium mt-4 mb-2">1. 安装Tailwind CSS</h4>
-                <p class="mb-2">
-                  首先，你需要在项目中安装Tailwind CSS。你可以通过npm或yarn进行安装：
-                </p>
-                <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-3 text-sm font-mono mb-3 overflow-x-auto">
-                  npm install -D tailwindcss<br />
-                  npx tailwindcss init
-                </div>
-                <h4 class="font-medium mt-4 mb-2">2. 配置Tailwind</h4>
-                <p class="mb-2">
-                  编辑tailwind.config.js文件，配置你的内容路径和主题：
-                </p>
-                <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-3 text-sm font-mono mb-3 overflow-x-auto">
-                  module.exports = {<br />
-                  content: ['./src/**/*.{html,js}'],<br />
-                  theme: {<br />
-                  extend: {},<br />
-                  },<br />
-                  plugins: [],<br />
-                  }
-                </div>
-                <h4 class="font-medium mt-4 mb-2">3. 使用响应式前缀</h4>
-                <p class="mb-2">
-                  Tailwind提供了以下响应式前缀，用于不同屏幕尺寸：
-                </p>
-                <ul class="list-disc list-inside mb-3 space-y-1 text-gray-700 dark:text-gray-300">
-                  <li><code class="bg-gray-100 dark:bg-gray-800 px-1 rounded text-sm">sm:</code> 640px以上</li>
-                  <li><code class="bg-gray-100 dark:bg-gray-800 px-1 rounded text-sm">md:</code> 768px以上</li>
-                  <li><code class="bg-gray-100 dark:bg-gray-800 px-1 rounded text-sm">lg:</code> 1024px以上</li>
-                  <li><code class="bg-gray-100 dark:bg-gray-800 px-1 rounded text-sm">xl:</code> 1280px以上</li>
-                  <li><code class="bg-gray-100 dark:bg-gray-800 px-1 rounded text-sm">2xl:</code> 1536px以上</li>
-                </ul>
+            <!-- AI回复 -->
+            <div v-else-if="message.type === 'ai'" class="flex items-start space-x-4">
+              <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-robot text-primary"></i>
               </div>
-              <div class="flex items-center space-x-2 mt-1 ml-2">
-                <button
-                  @click="likeMessage"
-                  class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-xs p-1"
-                >
-                  <i class="fas fa-thumbs-up"></i>
-                </button>
-                <button
-                  @click="dislikeMessage"
-                  class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-xs p-1"
-                >
-                  <i class="fas fa-thumbs-down"></i>
-                </button>
-                <button
-                  @click="copyMessage"
-                  class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-xs p-1"
-                >
-                  <i class="fas fa-copy"></i>
-                </button>
+              <div class="flex-1">
+                <div class="bg-white dark:bg-dark-card rounded-xl shadow-sm p-4 border border-gray-200 dark:border-gray-700">
+                  <div v-html="message.content"></div>
+                </div>
+                <div class="flex items-center space-x-2 mt-1 ml-2">
+                  <button
+                    @click="likeMessage"
+                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-xs p-1"
+                  >
+                    <i class="fas fa-thumbs-up"></i>
+                  </button>
+                  <button
+                    @click="dislikeMessage"
+                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-xs p-1"
+                  >
+                    <i class="fas fa-thumbs-down"></i>
+                  </button>
+                  <button
+                    @click="copyMessage"
+                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-xs p-1"
+                  >
+                    <i class="fas fa-copy"></i>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -374,10 +342,50 @@ export default {
     const availableModels = ['DeepSeek-7B', 'DeepSeek-13B', 'DeepSeek-Coder']
     
     const recentChats = reactive([
-      { id: 1, title: '如何使用Tailwind CSS构建响应式界面', time: '今天 14:30', color: 'bg-blue-100 dark:bg-blue-900/30', iconColor: 'text-blue-500 dark:text-blue-400' },
-      { id: 2, title: 'JavaScript异步编程最佳实践', time: '昨天 09:15', color: 'bg-green-100 dark:bg-green-900/30', iconColor: 'text-green-500 dark:text-green-400' },
-      { id: 3, title: 'React Hooks完全指南', time: '2023/11/28', color: 'bg-purple-100 dark:bg-purple-900/30', iconColor: 'text-purple-500 dark:text-purple-400' },
-      { id: 4, title: '前端性能优化的10个技巧', time: '2023/11/25', color: 'bg-yellow-100 dark:bg-yellow-900/30', iconColor: 'text-yellow-500 dark:text-yellow-400' }
+      { 
+        id: 1, 
+        title: '如何使用Tailwind CSS构建响应式界面', 
+        time: '今天 14:30', 
+        color: 'bg-blue-100 dark:bg-blue-900/30', 
+        iconColor: 'text-blue-500 dark:text-blue-400',
+        messages: [
+          { id: 1, type: 'user', content: '你好，我想了解一下如何使用Tailwind CSS构建响应式界面' },
+          { id: 2, type: 'ai', content: '使用Tailwind CSS构建响应式界面的基本步骤...' }
+        ]
+      },
+      { 
+        id: 2, 
+        title: 'JavaScript异步编程最佳实践', 
+        time: '昨天 09:15', 
+        color: 'bg-green-100 dark:bg-green-900/30', 
+        iconColor: 'text-green-500 dark:text-green-400',
+        messages: [
+          { id: 3, type: 'user', content: '请解释JavaScript异步编程的最佳实践' },
+          { id: 4, type: 'ai', content: 'JavaScript异步编程的最佳实践包括使用async/await、Promise等...' }
+        ]
+      },
+      { 
+        id: 3, 
+        title: 'React Hooks完全指南', 
+        time: '2023/11/28', 
+        color: 'bg-purple-100 dark:bg-purple-900/30', 
+        iconColor: 'text-purple-500 dark:text-purple-400',
+        messages: [
+          { id: 5, type: 'user', content: '请介绍React Hooks的使用方法' },
+          { id: 6, type: 'ai', content: 'React Hooks是React 16.8引入的新特性，包括useState、useEffect等...' }
+        ]
+      },
+      { 
+        id: 4, 
+        title: '前端性能优化的10个技巧', 
+        time: '2023/11/25', 
+        color: 'bg-yellow-100 dark:bg-yellow-900/30', 
+        iconColor: 'text-yellow-500 dark:text-yellow-400',
+        messages: [
+          { id: 7, type: 'user', content: '前端性能优化有哪些技巧？' },
+          { id: 8, type: 'ai', content: '前端性能优化的10个技巧包括代码分割、懒加载、缓存策略等...' }
+        ]
+      }
     ])
     
     const quickSuggestions = reactive([
@@ -386,6 +394,11 @@ export default {
       { title: '分析市场趋势', description: '讨论当前科技行业的发展方向' },
       { title: '帮助改进写作', description: '提供文章结构和表达方式的建议' }
     ])
+
+    // 计算属性
+    const currentChat = () => {
+      return recentChats.find(chat => chat.id === selectedChatId.value) || recentChats[0]
+    }
 
     // 方法
     const toggleTheme = () => {
@@ -420,7 +433,8 @@ export default {
         title: '新对话',
         time: '刚刚',
         color: 'bg-gray-100 dark:bg-gray-900/30',
-        iconColor: 'text-gray-500 dark:text-gray-400'
+        iconColor: 'text-gray-500 dark:text-gray-400',
+        messages: []
       }
       recentChats.unshift(newChat)
       selectedChatId.value = newChat.id
@@ -477,7 +491,27 @@ export default {
     const sendMessage = () => {
       if (!messageInput.value.trim()) return
       
-      console.log('发送消息:', messageInput.value)
+      const current = currentChat()
+      if (!current.messages) {
+        current.messages = []
+      }
+      
+      // 添加用户消息
+      current.messages.push({
+        id: Date.now(),
+        type: 'user',
+        content: messageInput.value.trim()
+      })
+      
+      // 模拟AI回复
+      setTimeout(() => {
+        current.messages.push({
+          id: Date.now() + 1,
+          type: 'ai',
+          content: `这是对"${messageInput.value.trim()}"的回复。这是一个模拟的AI回复。`
+        })
+      }, 1000)
+      
       messageInput.value = ''
     }
 
@@ -514,6 +548,9 @@ export default {
       availableModels,
       recentChats,
       quickSuggestions,
+      
+      // 计算属性
+      currentChat,
       
       // 方法
       toggleTheme,
