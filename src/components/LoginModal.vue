@@ -1,20 +1,15 @@
 <template>
   <transition name="modal">
-    <div 
-      v-if="showLoginModal" 
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-      @click.self="$emit('close-modal')"
-    >
+    <div v-if="showLoginModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      @click.self="$emit('close-modal')">
       <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
         <!-- 弹窗头部 -->
         <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
             {{ isLoginMode ? '登录' : '注册' }}
           </h3>
-          <button
-            @click="$emit('close-modal')"
-            class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-          >
+          <button @click="$emit('close-modal')"
+            class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
             <i class="fas fa-times"></i>
           </button>
         </div>
@@ -23,26 +18,20 @@
         <div class="p-6">
           <!-- 登录/注册切换 -->
           <div class="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1 mb-6">
-            <button
-              @click="isLoginMode = true"
-              :class="[
-                'flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors',
-                isLoginMode 
-                  ? 'bg-white dark:bg-gray-700 text-primary shadow-sm' 
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
-              ]"
-            >
+            <button @click="isLoginMode = true" :class="[
+              'flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors',
+              isLoginMode
+                ? 'bg-white dark:bg-gray-700 text-primary shadow-sm'
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+            ]">
               登录
             </button>
-            <button
-              @click="isLoginMode = false"
-              :class="[
-                'flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors',
-                !isLoginMode 
-                  ? 'bg-white dark:bg-gray-700 text-primary shadow-sm' 
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
-              ]"
-            >
+            <button @click="isLoginMode = false" :class="[
+              'flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors',
+              !isLoginMode
+                ? 'bg-white dark:bg-gray-700 text-primary shadow-sm'
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+            ]">
               注册
             </button>
           </div>
@@ -53,37 +42,24 @@
               <label for="loginIdentifier" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 用户名或邮箱
               </label>
-              <input
-                id="loginIdentifier"
-                v-model="loginForm.identifier"
-                type="text"
-                required
+              <input id="loginIdentifier" v-model="loginForm.identifier" type="text" required
                 class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-input text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
-                placeholder="请输入用户名或邮箱地址"
-              />
+                placeholder="请输入用户名或邮箱地址" />
             </div>
 
             <div>
               <label for="loginPassword" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 密码
               </label>
-              <input
-                id="loginPassword"
-                v-model="loginForm.password"
-                type="password"
-                required
+              <input id="loginPassword" v-model="loginForm.password" type="password" required
                 class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-input text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
-                placeholder="请输入密码"
-              />
+                placeholder="请输入密码" />
             </div>
 
             <div class="flex items-center justify-between">
               <label class="flex items-center">
-                <input
-                  v-model="loginForm.rememberMe"
-                  type="checkbox"
-                  class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
-                />
+                <input v-model="loginForm.rememberMe" type="checkbox"
+                  class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary" />
                 <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">记住我</span>
               </label>
               <button type="button" class="text-sm text-primary hover:text-primary/80 transition-colors">
@@ -91,16 +67,12 @@
               </button>
             </div>
 
-            <button
-              type="submit"
-              :disabled="isLoading"
-              :class="[
-                'w-full py-3 px-4 rounded-lg font-medium transition-colors',
-                isLoading 
-                  ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 cursor-not-allowed' 
-                  : 'bg-primary hover:bg-primary/90 text-white'
-              ]"
-            >
+            <button type="submit" :disabled="isLoading" :class="[
+              'w-full py-3 px-4 rounded-lg font-medium transition-colors',
+              isLoading
+                ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 cursor-not-allowed'
+                : 'bg-primary hover:bg-primary/90 text-white'
+            ]">
               <span v-if="!isLoading">登录</span>
               <span v-else class="flex items-center justify-center">
                 <i class="fas fa-spinner fa-spin mr-2"></i>
@@ -115,66 +87,42 @@
               <label for="registerUsername" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 用户名
               </label>
-              <input
-                id="registerUsername"
-                v-model="registerForm.username"
-                type="text"
-                required
+              <input id="registerUsername" v-model="registerForm.username" type="text" required
                 class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-input text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
-                placeholder="请输入用户名"
-              />
+                placeholder="请输入用户名" />
             </div>
 
             <div>
               <label for="registerEmail" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 邮箱地址
               </label>
-              <input
-                id="registerEmail"
-                v-model="registerForm.email"
-                type="email"
-                required
+              <input id="registerEmail" v-model="registerForm.email" type="email" required
                 class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-input text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
-                placeholder="请输入邮箱地址"
-              />
+                placeholder="请输入邮箱地址" />
             </div>
 
             <div>
               <label for="registerPassword" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 密码
               </label>
-              <input
-                id="registerPassword"
-                v-model="registerForm.password"
-                type="password"
-                required
+              <input id="registerPassword" v-model="registerForm.password" type="password" required
                 class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-input text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
-                placeholder="请输入密码"
-              />
+                placeholder="请输入密码" />
             </div>
 
             <div>
-              <label for="registerConfirmPassword" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label for="registerConfirmPassword"
+                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 确认密码
               </label>
-              <input
-                id="registerConfirmPassword"
-                v-model="registerForm.confirmPassword"
-                type="password"
-                required
+              <input id="registerConfirmPassword" v-model="registerForm.confirmPassword" type="password" required
                 class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-input text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
-                placeholder="请再次输入密码"
-              />
+                placeholder="请再次输入密码" />
             </div>
 
             <div class="flex items-center">
-              <input
-                id="agreeTerms"
-                v-model="registerForm.agreeTerms"
-                type="checkbox"
-                required
-                class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
-              />
+              <input id="agreeTerms" v-model="registerForm.agreeTerms" type="checkbox" required
+                class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary" />
               <label for="agreeTerms" class="ml-2 text-sm text-gray-600 dark:text-gray-400">
                 我已阅读并同意
                 <a href="#" class="text-primary hover:text-primary/80 transition-colors">服务条款</a>
@@ -183,16 +131,12 @@
               </label>
             </div>
 
-            <button
-              type="submit"
-              :disabled="isLoading"
-              :class="[
-                'w-full py-3 px-4 rounded-lg font-medium transition-colors',
-                isLoading 
-                  ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 cursor-not-allowed' 
-                  : 'bg-primary hover:bg-primary/90 text-white'
-              ]"
-            >
+            <button type="submit" :disabled="isLoading" :class="[
+              'w-full py-3 px-4 rounded-lg font-medium transition-colors',
+              isLoading
+                ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 cursor-not-allowed'
+                : 'bg-primary hover:bg-primary/90 text-white'
+            ]">
               <span v-if="!isLoading">注册</span>
               <span v-else class="flex items-center justify-center">
                 <i class="fas fa-spinner fa-spin mr-2"></i>
@@ -237,31 +181,50 @@ export default {
   },
   methods: {
     async handleLogin() {
-      if (!this.loginForm.identifier || !this.loginForm.password) {
-        this.$emit('show-error', '请输入用户名/邮箱和密码')
+      if (!this.loginForm.username || !this.loginForm.password) {
+        this.toast.error('请输入用户名和密码')
         return
       }
 
-      this.isLoading = true
       try {
-        // 调用后端登录API
-        const response = await this.loginUser(this.loginForm.identifier, this.loginForm.password)
-        
-        if (response.success) {
-          // 登录成功，传递正确的用户信息
-          this.$emit('login-success', response.user)
-          this.$emit('close-modal')
-          this.resetForms()
-        } else {
-          this.$emit('show-error', response.message || '登录失败')
-        }
+        this.isLoading = true
+
+        // 调用后端API进行认证
+        const response = await authAPI.login({
+          identifier: this.loginForm.identifier,
+          password: this.loginForm.password
+        })
+
+        // 保存认证信息到本地存储
+        localStorage.setItem('authToken', response.token)
+        localStorage.setItem('userInfo', JSON.stringify(response.user))
+        localStorage.setItem('refreshToken', response.refreshToken) // 如果有刷新token
+
+        // 触发登录成功事件
+        this.$emit('login-success', response.user)
+        this.toast.success('登录成功')
+
+        // 关闭登录弹窗
+        this.showLoginModal = false
+
       } catch (error) {
-        this.$emit('show-error', '登录失败，请检查用户名/邮箱和密码')
+        console.error('登录失败:', error)
+
+        // 根据错误类型显示不同的提示信息
+        if (error.message.includes('网络连接失败')) {
+          this.toast.error('无法连接到后端服务，请检查后端是否启动')
+        } else if (error.response?.status === 401) {
+          this.toast.error('用户名或密码错误')
+        } else if (error.response?.status === 404) {
+          this.toast.error('后端服务未找到，请检查API地址配置')
+        } else {
+          this.toast.error(error.response?.data?.message || '登录失败，请稍后重试')
+        }
       } finally {
         this.isLoading = false
       }
     },
-    
+
     // 模拟登录API调用
     async loginUser(identifier, password) {
       return new Promise((resolve) => {
@@ -278,29 +241,29 @@ export default {
               createdAt: "2023-11-01"
             }
           ]
-          
+
           // 查找用户（通过邮箱或用户名）
-          const user = testUsers.find(u => 
+          const user = testUsers.find(u =>
             u.email === identifier || u.username === identifier
           )
-          
+
           if (!user) {
             resolve({ success: false, message: '用户不存在' })
             return
           }
-          
+
           if (user.password !== password) {
             resolve({ success: false, message: '密码错误' })
             return
           }
-          
+
           // 登录成功，返回用户信息（不包含密码）
           const { password: _, ...userInfo } = user
           resolve({ success: true, user: userInfo })
         }, 500)
       })
     },
-    
+
     async handleRegister() {
       if (!this.registerForm.username || !this.registerForm.email || !this.registerForm.password) {
         this.$emit('show-error', '请填写所有必填字段')
@@ -321,7 +284,7 @@ export default {
       try {
         // 模拟注册API调用
         await new Promise(resolve => setTimeout(resolve, 1500))
-        
+
         // 注册成功，切换到登录模式
         this.isLoginMode = true
         this.$emit('show-success', '注册成功，请登录')
@@ -332,7 +295,7 @@ export default {
         this.isLoading = false
       }
     },
-    
+
     resetForms() {
       this.loginForm = {
         identifier: '',
