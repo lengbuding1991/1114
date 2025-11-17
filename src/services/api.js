@@ -79,7 +79,7 @@ export const chatAPI = {
   getChats: () => apiClient.get('/chats/'),
   
   // 创建新聊天 - 对应FastAPI的 /api/chats/
-  createChat: (title) => apiClient.post('/chats/', { title }),
+  createChat: (title) => apiClient.post(`/chats/?title=${encodeURIComponent(title)}`),
   
   // 删除聊天 - 对应FastAPI的 /api/chats/{chat_id}
   deleteChat: (chatId) => apiClient.delete(`/chats/${chatId}`),

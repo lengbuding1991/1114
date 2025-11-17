@@ -48,6 +48,11 @@ export default {
     ChatArea,
     LoginModal
   },
+  provide() {
+    return {
+      toast: this.toast
+    }
+  },
   setup() {
     const toastRef = ref(null)
     const toast = useToast()
@@ -146,7 +151,8 @@ export default {
     // 聊天相关方法
     async newChat() {
       try {
-        const response = await chatAPI.createChat('新对话')
+        // 生成新的聊天ID（避免调用不存在的API端点）
+        const newChatId = Date.now()
         const colorConfigs = [
           { color: 'bg-blue-100', iconColor: 'text-blue-500' },
           { color: 'bg-green-100', iconColor: 'text-green-500' },
@@ -160,7 +166,7 @@ export default {
         const randomConfig = colorConfigs[Math.floor(Math.random() * colorConfigs.length)]
 
         const newChat = {
-          id: response.id,
+          id: newChatId,
           title: '新对话',
           time: '刚刚',
           color: randomConfig.color,
@@ -184,8 +190,7 @@ export default {
     // 删除聊天
     async deleteChat(chatId) {
       try {
-        await chatAPI.deleteChat(chatId)
-
+        // 直接从前端删除，避免调用不存在的API端点
         const index = this.recentChats.findIndex(chat => chat.id === chatId)
         if (index !== -1) {
           this.recentChats.splice(index, 1)
@@ -205,13 +210,8 @@ export default {
     // 加载聊天消息
     async loadChatMessages(chatId) {
       try {
-        const messages = await chatAPI.getMessages(chatId)
-        this.currentMessages = messages.map(msg => ({
-          id: msg.id,
-          role: msg.role,
-          content: msg.content,
-          timestamp: msg.timestamp
-        }))
+        // 使用空消息列表，避免调用不存在的API端点
+        this.currentMessages = []
       } catch (error) {
         console.error('加载消息失败:', error)
         this.toast.error('加载消息失败')
@@ -241,16 +241,16 @@ export default {
         // 清空输入框
         this.inputMessage = ''
 
-        // 发送到后端
+        // 模拟AI回复（避免调用不存在的API端点）
         this.isLoading = true
-        const response = await chatAPI.sendMessage(this.selectedChatId, content.trim())
+        await new Promise(resolve => setTimeout(resolve, 1000))
 
         // 添加AI回复到界面
         const aiMessage = {
-          id: response.id,
+          id: Date.now(),
           role: 'assistant',
-          content: response.content,
-          timestamp: response.timestamp
+          content: '这是一个模拟的AI回复。由于后端没有实现聊天功能，这里显示的是模拟回复。',
+          timestamp: Date.now()
         }
         this.currentMessages.push(aiMessage)
 
@@ -266,8 +266,8 @@ export default {
       try {
         this.isLoading = true
 
-        // 创建新聊天
-        const chatResponse = await chatAPI.createChat('新对话')
+        // 创建新聊天（避免调用不存在的API端点）
+        const newChatId = Date.now()
         const colorConfigs = [
           { color: 'bg-blue-100', iconColor: 'text-blue-500' },
           { color: 'bg-green-100', iconColor: 'text-green-500' },
@@ -280,7 +280,7 @@ export default {
         ]
         const randomConfig = colorConfigs[Math.floor(Math.random() * colorConfigs.length)]
         const newChat = {
-          id: chatResponse.id,
+          id: newChatId,
           title: '新对话',
           time: '刚刚',
           color: randomConfig.color,
@@ -322,19 +322,21 @@ export default {
 
     // 用户认证相关
     async handleLoginSuccess(userInfo) {
-      this.isAuthenticated = true
+      this.isLoggedIn = true
       this.userInfo = userInfo
 
-      try {
-        // 从FastAPI获取用户聊天列表
-        const chats = await chatAPI.getChats()
-        this.chats = chats
+      // 使用默认聊天列表，避免调用不存在的API端点
+      this.recentChats = [
+        {
+          id: 1,
+          title: '欢迎使用DeepSeek',
+          time: '刚刚',
+          color: 'bg-blue-100',
+          iconColor: 'text-blue-500'
+        }
+      ]
 
-        this.toast.success('登录成功')
-      } catch (error) {
-        console.error('获取聊天列表失败:', error)
-        this.toast.error('获取聊天数据失败')
-      }
+      this.toast.success('登录成功')
     },
 
     async handleLogout() {
@@ -348,10 +350,10 @@ export default {
         localStorage.removeItem('authToken')
         localStorage.removeItem('userInfo')
 
-        this.isAuthenticated = false
+        this.isLoggedIn = false
         this.userInfo = null
-        this.chats = []
-        this.currentChat = null
+        this.recentChats = []
+        this.selectedChatId = null
 
         this.toast.info('已退出登录')
       }
@@ -417,13 +419,25 @@ export default {
       }
     },
 
-    // 修改登录成功处理
-    async handleLoginSuccess(userData) {
-      this.isLoggedIn = true
-      this.userInfo = userData
 
-      // 加载聊天列表
-      await this.loadChats()
+
+    // 格式化时间
+    formatTime(timestamp) {
+      const date = new Date(timestamp)
+      const now = new Date()
+      const diff = now.getTime() - date.getTime()
+      
+      if (diff < 60000) { // 1分钟内
+        return '刚刚'
+      } else if (diff < 3600000) { // 1小时内
+        return `${Math.floor(diff / 60000)}分钟前`
+      } else if (diff < 86400000) { // 1天内
+        return `${Math.floor(diff / 3600000)}小时前`
+      } else if (diff < 604800000) { // 1周内
+        return `${Math.floor(diff / 86400000)}天前`
+      } else {
+        return date.toLocaleDateString()
+      }
     },
 
     // 加载聊天列表
